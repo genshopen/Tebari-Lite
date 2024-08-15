@@ -282,6 +282,7 @@ Rename-Item -Path ".\StagingTool.exe" -NewName "s.exe"
 .\s.exe /enable 49607261
 .\s.exe /enable 49686287
 .\s.exe /enable 52110492
+.\s.exe /enable 27974039
 
 Remove-Item -Path ".\s.exe"
 
