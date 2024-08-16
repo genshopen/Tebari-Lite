@@ -1,4 +1,4 @@
-﻿$URL = "https://github.com/genshopen/Tebari-Lite/raw/main"
+﻿$prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main"
 $cacheFolder = "$env:APPDATA\.cache"
 
 if (-not (Test-Path -Path $cacheFolder)) {
@@ -6,12 +6,15 @@ if (-not (Test-Path -Path $cacheFolder)) {
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $scriptURL = "$URL/script/Run-Lite.ps1"
+    $scriptURL = "$prefixURL/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
     else { $pwsh = "powershell" }
-    
-    try { sudo run $pwsh -Command irm $scriptURL | iex }
+
+    try {
+        $tmpCommand = "-Command"
+        sudo run $pwsh $tmpCommand "irm $scriptURL | iex"
+    }
     catch {
         $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $cacheFolder\Run-Lite.ps1"
         Invoke-WebRequest -Uri $scriptURL -OutFile "$cacheFolder\Run-Lite.ps1"
@@ -28,18 +31,18 @@ foreach ($item in $items) {
     Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
 }
 
-$ids = Get-Content -Path "$cacheFolder\$(($items[1] -split '/')[1])"
-$vars = Get-Content -Path "$cacheFolder\$(($items[2] -split '/')[1])"
+$idSet = Get-Content -Path "$cacheFolder\$(($items[1] -split '/')[1])"
+$variantSet = Get-Content -Path "$cacheFolder\$(($items[2] -split '/')[1])"
 
 $exePath = "$cacheFolder\StagingTool.exe"
 
-foreach ($id in $ids) { & $exePath /enable $id }
+foreach ($id in $idSet) { & $exePath /enable $id }
 
-foreach ($var in $vars) {
-    $varArray = $var -split " "
+foreach ($var in $variantSet) {
+    $tmpArray = $var -split " "
 
-    try { & $exePath /setvariant $varArray[0] $varArray[1] $varArray[2] }
-    catch { & $exePath /setvariant $varArray[0] $varArray[1] }
+    try { & $exePath /setvariant $tmpArray[0] $tmpArray[1] $tmpArray[2] }
+    catch { & $exePath /setvariant $tmpArray[0] $tmpArray[1] }
 }
 
 foreach ($item in $items) { Remove-Item -Path "$cacheFolder\$(($item -split '/')[1])" }
