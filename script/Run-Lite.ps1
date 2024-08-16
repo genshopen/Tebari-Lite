@@ -1,4 +1,4 @@
-﻿# In development
+﻿# Tebari Lite (Build 5)
 
 $ErrorActionPreference = "Stop"
 
@@ -7,7 +7,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         New-Item -Path $env:APPDATA\.cache -ItemType Directory
     }
     
-    $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/development/script/Run-Lite.ps1"
+    $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/main/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
     else { $pwsh = "powershell" }
@@ -35,7 +35,7 @@ if (-not (Test-Path -Path $env:APPDATA\.cache)) {
 $items = @("bin/StagingTool.exe", "data/id.dat", "data/variant.dat")
 
 foreach ($item in $items) {
-    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/development/$item" -OutFile "$env:APPDATA\.cache\$(($item -split '/')[1])"
+    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$env:APPDATA\.cache\$(($item -split '/')[1])"
 }
 
 $idSet = Get-Content -Path "$env:APPDATA\.cache\$(($items[1] -split '/')[1])"
@@ -59,8 +59,8 @@ Read-Host -Prompt "Press any key to exit "
 # SIG # Begin signature block
 # MIIFpwYJKoZIhvcNAQcCoIIFmDCCBZQCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCC8PQMAVqh/9WGS
-# 1bn9+PMLseuNtnaNklnX+cdapWkArKCCAxYwggMSMIIB+qADAgECAhAqjHUES8da
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCuL2QUw7cLCEe3
+# 99IcZXKrZp4YhHqctX9Lzk85AV4Tu6CCAxYwggMSMIIB+qADAgECAhAqjHUES8da
 # qkaeKRQvkc/RMA0GCSqGSIb3DQEBCwUAMCExHzAdBgNVBAMMFmdlbnNob3BlbiDl
 # gIvkurrmhpHorYkwHhcNMjQwNzMxMTcwNDA5WhcNMjUwNzMxMTcyNDA5WjAhMR8w
 # HQYDVQQDDBZnZW5zaG9wZW4g5YCL5Lq65oaR6K2JMIIBIjANBgkqhkiG9w0BAQEF
@@ -80,12 +80,12 @@ Read-Host -Prompt "Press any key to exit "
 # MYIB5zCCAeMCAQEwNTAhMR8wHQYDVQQDDBZnZW5zaG9wZW4g5YCL5Lq65oaR6K2J
 # AhAqjHUES8daqkaeKRQvkc/RMA0GCWCGSAFlAwQCAQUAoIGEMBgGCisGAQQBgjcC
 # AQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYB
-# BAGCNwIBCzEOMAwGCisGAQQBgjcCARUwLwYJKoZIhvcNAQkEMSIEIOXReyJO+UCb
-# 2ojRTQXIDd0b0b+cyShJigpu2CMZwIjJMA0GCSqGSIb3DQEBAQUABIIBAGxQIYmA
-# XbJw0xyPcnPVuZ7M4wqIIQahimwPA9eylI0uUMDyg5qWho+6aNNbfhO66rBPtdiB
-# EBQieeWKmP5VMzPG6ilaVyTNyYkt8Y0eWStJOIgQl+kdA/zd8CX48Zu4T0KSPwOo
-# 8idd+qKxOxMDzBFka+bmSq1eZLnbUCQMt6rysaMnXZfXRnSS46qjsL+GqnOhUeN7
-# IGXDJBPhDxarYaVy1SRU1v/1aW0AoZjgJ/S+TlSp8pmkughfTBecwK3PQZqYpn+U
-# 49RpV4bZnQzHJk2jYIVOYrXLLhQY/n5/kaPljuacAKSFLdx9aMD2sLNYA2r0Hz16
-# 35jqrxQQdTkT5AU=
+# BAGCNwIBCzEOMAwGCisGAQQBgjcCARUwLwYJKoZIhvcNAQkEMSIEIA2rujz4cpnq
+# UuVnc8Hkrn/ZwWpNm5NdCwZ30VhG7UhnMA0GCSqGSIb3DQEBAQUABIIBAGy4wuyZ
+# ceGYXuT7rcjLeYrz0FKTTZ1GckCKrxiDPBSfpQkQoQPl2dB2Zt3yIjtCJvA4L0Ek
+# qVgq4WLtPGJay3wtVT49sEtj+kLa2KSJRegLtuSjIQpKSMj6YAH1fXIUavXaRUzZ
+# JhJ2jFlebWZzhLrnQPbG3Sf5jxA/DHTrCDUNmqJvyd1m3hl47uGoMQBAi5kZxpqH
+# bjd3SUkYt7Inl2Zb+CDyrnpo8RRb/sJBFfohHaInsHufyJZl6tqij4rO8ccX9m/0
+# EBZNF68W08cnsin6I/uNlnUXFCy1m5OWvh1QsN14/AQq3NNfCMhSYqmWeN2ZXenl
+# 4HON6qMl2rJFdsY=
 # SIG # End signature block
