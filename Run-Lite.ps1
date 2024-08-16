@@ -1,4 +1,4 @@
-$cacheFolder = "$env:APPDATA\.cache"
+﻿$cacheFolder = "$env:APPDATA\.cache"
 
 if (-not (Test-Path -Path $cacheFolder)) {
     New-Item -Path $cacheFolder -ItemType Directory
@@ -7,19 +7,17 @@ if (-not (Test-Path -Path $cacheFolder)) {
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/main/Run-Lite.ps1"
 
-    if (-not ($PSVersionTable.PSEdition = "Core")) {
-        $pwsh = "pwsh"
-    }
-    else {
-        $pwsh = "powershell"
-    }
-
-    try {
-        sudo run $pwsh -Command irm $scriptURL | iex
-    }
+    if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
+    else { $pwsh = "powershell" }
+    
+    try { sudo run $pwsh -Command irm $scriptURL | iex }
     catch {
-        $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $cacheFolder\r.ps1"
-        Invoke-WebRequest -Uri $scriptURL -OutFile "$cacheFolder\r.ps1"
+        $cacheFolder = "$env:APPDATA\.cache"
+        $pwsh = "pwsh"
+        $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/main/Run-Lite.ps1"
+
+        $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $cacheFolder\Run-Lite.ps1"
+        Invoke-WebRequest -Uri $scriptURL -OutFile "$cacheFolder\Run-Lite.ps1"
 
         Start-Process $pwsh $pwshCommand -Verb RunAs
     }
@@ -29,29 +27,34 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 # $response = Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/StagingTool.exe" -UseBasicParsing
 
-Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/StagingTool.exe" -OutFile "%appdata%\.cache\StagingTool.exe"
-Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/id.txt" -OutFile "%appdata%\.cache\id.txt"
-Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/var.txt" -OutFile "%appdata%\.cache\var.txt"
+$items = @("bin\StagingTool.exe", "data\id.dat", "data\variant.dat")
 
-
-$ids = Get-Content -Path $cacheFolder\id.txt
-$vars = Get-Content -Path $cacheFolder\var.txt
-
-for ($i = 0; $i -lt $ids.Length; $i++) {
-    $cacheFolder\s.exe /enable $($ids[$i])
+foreach ($item in $items) {
+    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$cacheFolder\$item"
 }
 
-for ($i = 0; $i -lt $vars.Length; $i++) {
-    $cacheFolder\s.exe /setvariant $($vars[$i])
+$ids = Get-Content -Path "$cacheFolder\$($items[1])"
+$vars = Get-Content -Path "$cacheFolder\$($items[2])"
+
+$exePath = "$cacheFolder\StagingTool.exe"
+
+foreach ($id in $ids) { & $exePath /enable $id }
+
+foreach ($var in $vars) {
+    $varArray = $var -split " "
+
+    try { & $exePath /setvariant $varArray[0] $varArray[1] $varArray[2] }
+    catch { & $exePath /setvariant $varArray[0] $varArray[1] }
 }
 
-Remove-Item -Path "$cacheFolder"
+foreach ($item in $items) { Remove-Item -Path "$cacheFolder\$item" }
+
 
 # SIG # Begin signature block
 # MIIFpwYJKoZIhvcNAQcCoIIFmDCCBZQCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAjvQTZgt2ilrh3
-# 9h94lFdu8J7lkMD30Ok63VQnhixDNaCCAxYwggMSMIIB+qADAgECAhAqjHUES8da
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDTWz59d5k8RGkb
+# IcPuLKyvTDWBmpMhkJbrZ5SfOdp0maCCAxYwggMSMIIB+qADAgECAhAqjHUES8da
 # qkaeKRQvkc/RMA0GCSqGSIb3DQEBCwUAMCExHzAdBgNVBAMMFmdlbnNob3BlbiDl
 # gIvkurrmhpHorYkwHhcNMjQwNzMxMTcwNDA5WhcNMjUwNzMxMTcyNDA5WjAhMR8w
 # HQYDVQQDDBZnZW5zaG9wZW4g5YCL5Lq65oaR6K2JMIIBIjANBgkqhkiG9w0BAQEF
@@ -71,12 +74,12 @@ Remove-Item -Path "$cacheFolder"
 # MYIB5zCCAeMCAQEwNTAhMR8wHQYDVQQDDBZnZW5zaG9wZW4g5YCL5Lq65oaR6K2J
 # AhAqjHUES8daqkaeKRQvkc/RMA0GCWCGSAFlAwQCAQUAoIGEMBgGCisGAQQBgjcC
 # AQwxCjAIoAKAAKECgAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYB
-# BAGCNwIBCzEOMAwGCisGAQQBgjcCARUwLwYJKoZIhvcNAQkEMSIEIDoSRk+6j2bx
-# 3fbM3wa3NhFNboInKurqMJAVH0RNMJ4SMA0GCSqGSIb3DQEBAQUABIIBAJeA84dz
-# KFpTHVwbwPwqBZiE6+1b7eMSlGlLnsRmlzXbQusZVKw/LIxCXcu/VDz6E1KRi6I3
-# w5waRfocisUWH0sjUda4iwDqU8JERDI5THlR0NS/Ux2n15DagGEK82ooDdzIntYX
-# P+sMgb50oJLAz1hGOYcxT7EAbX8xARaUlF3ECFd2furIPYnPthZe4Sk4eUxQpq9A
-# Qbqh1j5QjST1I4QMFgvF6VkS2KuVv8/PGPzXSv2ulrMVJvrjyYScxEXOLRpMqi5I
-# OW3GsIGCVAUzwFYLbl2wIyxj18aa4qHAeqG114t+L8+82nnJg+T6gpcLPXEAmQFN
-# xcKFE7+YgIcDkTk=
+# BAGCNwIBCzEOMAwGCisGAQQBgjcCARUwLwYJKoZIhvcNAQkEMSIEIOt6d0sKJNHi
+# dbFgcJk2PvXx45g22TJ/GjDcZIwOjE31MA0GCSqGSIb3DQEBAQUABIIBAFJD5l+G
+# 8bmgGI2kgXXXukABE57Dy9+tbi951tNfyhnbbB8k5OzcoV3WoR+D3S/e2kogyYRk
+# 7lYGWJG4oSWtbTn9Sc7xP9SgfT7M7BYd9UDzKVdnO3VbtLHLTFj72loGG/Km3jAL
+# UaM5R+gZxDkhG4jzrd1qtAOE6/blADr9BSh7vL6DazCeKPCTuHaGeBKlLlNvu//2
+# wrm7ofAqG8RiOkqKcQxcMsfVlweEY7dlH2HRzXeb+xPf+jCivOVj+H8RQYvhToFy
+# xnPqLoR8enVtSOwGpwrPYC/ijWCFTvXurbmkeUGhfM8qCJQq4G+CxAhOhL6PTNow
+# znwhUTXvOINw3Ow=
 # SIG # End signature block
