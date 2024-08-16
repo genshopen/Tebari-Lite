@@ -1,13 +1,11 @@
-﻿$prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main" # prefix
-$cacheFolder = "$env:APPDATA\.cache"
+﻿$cacheFolder = "$env:APPDATA\.cache"
 
 if (-not (Test-Path -Path $cacheFolder)) {
     New-Item -Path $cacheFolder -ItemType Directory
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main" # prefix
-    $scriptURL = "$prefixURL/script/Run-Lite.ps1"
+    $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/main/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
     else { $pwsh = "powershell" }
@@ -31,7 +29,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 $items = @("bin/StagingTool.exe", "data/id.dat", "data/variant.dat")
 
 foreach ($item in $items) {
-    Invoke-WebRequest -Uri "$prefixURL/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
+    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
 }
 
 $idSet = Get-Content -Path "$cacheFolder\$(($items[1] -split '/')[1])"
