@@ -1,10 +1,8 @@
-﻿# In development
-
-if (-not (Test-Path -Path $env:APPDATA\.cache)) {
-    New-Item -Path $env:APPDATA\.cache -ItemType Directory
-}
-
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+﻿if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    if (-not (Test-Path -Path $env:APPDATA\.cache)) {
+        New-Item -Path $env:APPDATA\.cache -ItemType Directory
+    }
+    
     $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/development/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
@@ -24,6 +22,12 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
         return
     }
+}
+
+# In development
+
+if (-not (Test-Path -Path $env:APPDATA\.cache)) {
+    New-Item -Path $env:APPDATA\.cache -ItemType Directory
 }
 
 $items = @("bin/StagingTool.exe", "data/id.dat", "data/variant.dat")
