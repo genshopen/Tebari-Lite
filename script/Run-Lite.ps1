@@ -1,4 +1,4 @@
-﻿$prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main"
+﻿$prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main" # prefix
 $cacheFolder = "$env:APPDATA\.cache"
 
 if (-not (Test-Path -Path $cacheFolder)) {
@@ -6,6 +6,7 @@ if (-not (Test-Path -Path $cacheFolder)) {
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    $prefixURL = "https://github.com/genshopen/Tebari-Lite/raw/main" # prefix
     $scriptURL = "$prefixURL/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
@@ -14,21 +15,23 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     try {
         $tmpCommand = "-Command"
         sudo run $pwsh $tmpCommand "irm $scriptURL | iex"
+
+        return
     }
     catch {
         $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $cacheFolder\Run-Lite.ps1"
         Invoke-WebRequest -Uri $scriptURL -OutFile "$cacheFolder\Run-Lite.ps1"
 
         Start-Process $pwsh $pwshCommand -Verb RunAs
-    }
 
-    exit
+        return
+    }
 }
 
 $items = @("bin/StagingTool.exe", "data/id.dat", "data/variant.dat")
 
 foreach ($item in $items) {
-    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
+    Invoke-WebRequest -Uri "$prefixURL/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
 }
 
 $idSet = Get-Content -Path "$cacheFolder\$(($items[1] -split '/')[1])"
@@ -47,6 +50,7 @@ foreach ($var in $variantSet) {
 
 foreach ($item in $items) { Remove-Item -Path "$cacheFolder\$(($item -split '/')[1])" }
 
+Read-Host -Prompt "Press any key to exit "
 
 # SIG # Begin signature block
 # MIIFpwYJKoZIhvcNAQcCoIIFmDCCBZQCAQExDzANBglghkgBZQMEAgEFADB5Bgor
