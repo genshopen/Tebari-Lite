@@ -1,4 +1,8 @@
-﻿if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+﻿# In development
+
+$ErrorActionPreference = "Stop"
+
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     if (-not (Test-Path -Path $env:APPDATA\.cache)) {
         New-Item -Path $env:APPDATA\.cache -ItemType Directory
     }
@@ -23,8 +27,6 @@
         return
     }
 }
-
-# In development
 
 if (-not (Test-Path -Path $env:APPDATA\.cache)) {
     New-Item -Path $env:APPDATA\.cache -ItemType Directory
