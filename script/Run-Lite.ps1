@@ -1,11 +1,9 @@
-﻿$cacheFolder = "$env:APPDATA\.cache"
-
-if (-not (Test-Path -Path $cacheFolder)) {
-    New-Item -Path $cacheFolder -ItemType Directory
+﻿if (-not (Test-Path -Path $env:APPDATA\.cache)) {
+    New-Item -Path $env:APPDATA\.cache -ItemType Directory
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/main/script/Run-Lite.ps1"
+    $scriptURL = "https://github.com/genshopen/Tebari-Lite/raw/development/script/Run-Lite.ps1"
 
     if (($PSVersionTable.PSEdition -eq "Core")) { $pwsh = "pwsh" }
     else { $pwsh = "powershell" }
@@ -17,8 +15,8 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         return
     }
     catch {
-        $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $cacheFolder\Run-Lite.ps1"
-        Invoke-WebRequest -Uri $scriptURL -OutFile "$cacheFolder\Run-Lite.ps1"
+        $pwshCommand = "-NoProfile -ExecutionPolicy Bypass -File $env:APPDATA\.cache\Run-Lite.ps1"
+        Invoke-WebRequest -Uri $scriptURL -OutFile "$env:APPDATA\.cache\Run-Lite.ps1"
 
         Start-Process $pwsh $pwshCommand -Verb RunAs
 
@@ -29,13 +27,13 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 $items = @("bin/StagingTool.exe", "data/id.dat", "data/variant.dat")
 
 foreach ($item in $items) {
-    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/main/$item" -OutFile "$cacheFolder\$(($item -split '/')[1])"
+    Invoke-WebRequest -Uri "https://github.com/genshopen/Tebari-Lite/raw/development/$item" -OutFile "$env:APPDATA\.cache\$(($item -split '/')[1])"
 }
 
-$idSet = Get-Content -Path "$cacheFolder\$(($items[1] -split '/')[1])"
-$variantSet = Get-Content -Path "$cacheFolder\$(($items[2] -split '/')[1])"
+$idSet = Get-Content -Path "$env:APPDATA\.cache\$(($items[1] -split '/')[1])"
+$variantSet = Get-Content -Path "$env:APPDATA\.cache\$(($items[2] -split '/')[1])"
 
-$exePath = "$cacheFolder\StagingTool.exe"
+$exePath = "$env:APPDATA\.cache\StagingTool.exe"
 
 foreach ($id in $idSet) { & $exePath /enable $id }
 
@@ -46,7 +44,7 @@ foreach ($var in $variantSet) {
     catch { & $exePath /setvariant $tmpArray[0] $tmpArray[1] }
 }
 
-foreach ($item in $items) { Remove-Item -Path "$cacheFolder\$(($item -split '/')[1])" }
+foreach ($item in $items) { Remove-Item -Path "$env:APPDATA\.cache\$(($item -split '/')[1])" }
 
 Read-Host -Prompt "Press any key to exit "
 
